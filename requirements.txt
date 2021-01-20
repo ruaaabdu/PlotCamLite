@@ -1,0 +1,51 @@
+ReadMe:
+
+Installation instructions
+1.	Set up Ubuntu OS 
+a.	Install Raspberry Pi Imager on whatever OS you are working on
+b.	Connect micro-SD card of at least 8GB to the computer you’re working on. 
+c.	Open up the imager and choose ubuntu for OS, the micro SD card for the SD card and press Write
+d.	Move card from computer to RPI
+e.	Connect RPI to monitor and power
+f.	Follow the set up instructions
+g.	To go back to GUI from CLI in Ubuntu, try “startx”, 
+h.	https://askubuntu.com/questions/168736/how-to-start-gui-from-command-line
+i.	sudo apt-get install ubuntu-desktop (helpful if you accidentally switch ot CLI)
+2.	Set up Debian OS (formerly known as Raspbian OS)
+a.	Install Raspberry Pi Imager on whatever PC you are working on
+b.	Connect micro-SD card of at least 8GB to the computer which you’re working on. 
+c.	Open up the imager and choose the “Raspberry Pi OS” for OS, the micro SD card for the SD card and press Write
+d.	Move card from PC to RPI
+e.	Connect RPI to monitor, mouse, keyboard, and power
+f.	Follow the set up instructions and set a user name, password, etc.
+3.	Install VSCode
+a.	Go to https://code.visualstudio.com/Download 
+b.	choose the “ARM” option from the .deb installation menu
+4.	Install PIP
+a.	be in home directory, input “cd” in terminal to go to home
+b.	write the following code: sudo apt update, sudo apt install python3-pip
+c.	double check version by typing pip3 –version, the one im using is pip 20.3.3
+5.	Install Git
+a.	From terminal: sudo apt-get install Git
+6.	Clone github project to a working directory for your code, mine is in Home/Working Directory – Plot Cam.
+a.	Within the working directory, right click select “Open in Terminal”
+b.	From terminal : git clone https//github.com/ruaaabdu/PlotCamLite/
+c.	There should be a folder in the working directory now called PlotCamLite, this will only contain the master, which right now is empty
+7.	Open Terminal in the plotcamlite folder
+8.	Checkout branch
+a.	Check the branches available: from terminal : git branch -a
+b.	From terminal: git checkout “branch-name”, for example: git checkout ruaa-abdu-patch-1-linux. Now your plot cam lite wil have all the files available in the branch. 
+9.	Install PyQt5
+a.	From terminal: sudo apt-get && install python3-pyqt5 && sudo apt-get install pyqt5-dev-tools && sudo apt-get install qttools5-dev-tools
+10.	Install pyrealsense2
+a.	Follow the instructions mentioned here : https://github.com/IntelRealSense/librealsense/blob/master/doc/installation_raspbian.md
+i.	Note: in Add Swap: change sudo vim to sudo nano, rest of command stays the same.
+ii.	For the “protobuf” subsection, the installation instructions didn’t work too well so I referred to the instructions in the ReadMe: https://github.com/protocolbuffers/protobuf/blob/master/src/README.md . The make commands will take a long amount of time.
+11.	Install OpenCV
+a.	In terminal: sudo apt update && sudo apt upgrade && sudo apt install python3-opencv
+12.	Install Phidget library 
+a.	pip install phidget22
+13.	Install PyQt Graph
+a.	pip install pyqtgraph
+14.	install pillow
+a.	pip install pillow
