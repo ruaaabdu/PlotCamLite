@@ -38,5 +38,5 @@
 - Install Git
   1. sudo apt-get install Git
 
-- Clone Project
+
 
