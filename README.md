@@ -37,8 +37,8 @@
 
 - Install Git
   1. sudo apt-get install Git
- 2. Add sssh key 
- 3. git bash in folder you want repo in
+  2. Add sssh key 
+  3. git bash in folder you want repo in
   4. copy sssh key link and git clne in git bash
   5. git checkout origin/"branchname"
   6. git checkout -b windows-patch
