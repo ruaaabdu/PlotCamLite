@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="Pictures">
+    <file>cameraleaf.png</file>
+    <file>def.JPG</file>
+  </qresource>
+</RCC>
