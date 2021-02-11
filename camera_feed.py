@@ -48,7 +48,6 @@ class CameraThread(QThread):
 
         while self.runs == True and True:  # while thread is running and loop gets image
             frames = pipeline.wait_for_frames()
-            frameset = pipeline.
             color_frame = frames.get_color_frame()
             self.depth_frame = frames.get_depth_frame()
             self.depth_frame.keep()
