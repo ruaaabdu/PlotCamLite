@@ -76,6 +76,7 @@ class CameraThread(QThread):
 
     @pyqtSlot(str)
     def take_picture(self, filename_to_save):
+        
         self.save_rgb_640(filename_to_save)
         self.save_depth_640(filename_to_save)
                     
@@ -88,16 +89,20 @@ class CameraThread(QThread):
         self.q_img2 = QImage(self.color_image_1280.data, width, height, bytes_per_line, QImage.Format_BGR888)
         if self.q_img2 == None:
            return
-        print("here")
         self.q_img2.save(filename_to_save)
+        
 
     def save_depth_1280(self, filename_to_save):
         ## actions to save depth
+        depth_frame = self.frames.get_depth_frame()
+        frame_height = depth_frame.get_height()
+        frame_width = depth_frame.get_width()
         with open(str(filename_to_save + ".txt"), 'w') as outfile:
             for y in range(0, frame_height):
                 for x in range(0, frame_width):
                     pixel_depth = depth_frame.get_distance(x, y)
                     outfile.write("x = " + str(x) + " y = " + str(y) + " Depth = " + str(pixel_depth) + "\n")
+        
 
     def save_rgb_640(self, filename_to_save):
         # actions to save rgb as 640x480
@@ -105,6 +110,9 @@ class CameraThread(QThread):
 
     def save_depth_640(self, filename_to_save):
         ## actions to save depth as 640x480
+        depth_frame = self.frames.get_depth_frame()
+        frame_height = depth_frame.get_height()
+        frame_width = depth_frame.get_width()
         with open(str(filename_to_save + ".txt"), 'w') as outfile:
             for y in range(0, frame_height):
                 for x in range(0, frame_width):

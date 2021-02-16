@@ -112,7 +112,6 @@ class Window(QMainWindow):
             image QImage: Image to be displayed
         """
         pix = QPixmap.fromImage(image)
-        #pix = pix.
         self.camera_label.setPixmap(pix)
 
     def take_picture(self):
@@ -233,7 +232,6 @@ class NewFilePage(QDialog):
 
     def create_directories(self):
         """ Creates new RGB, Depth, and Metadata directories using filename and sets new plot number"""
-
         file_name = self.newFileLineEdit.text()
         new_path = main_path + "\\" + file_name
 
