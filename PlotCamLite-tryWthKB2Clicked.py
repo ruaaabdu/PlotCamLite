@@ -7,7 +7,13 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import QColor, QIcon, QImage, QPixmap, QTransform
 from PyQt5.QtWidgets import *
 from PyQt5.uic import loadUi
-import readchar
+
+rs.__path__
+['/usr/lib/python3/dist-packages/pyrealsense2']
+
+
+  
+#import readchar
 
 
 #Keyboard Section

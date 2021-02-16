@@ -9,6 +9,12 @@ import pyrealsense2 as rs
 import numpy as np
 import cv2
 
+rs.__path__
+['/usr/lib/python3/dist-packages/pyrealsense2']
+
+
+
+
 # Configure depth and color streams
 pipeline = rs.pipeline()
 config = rs.config()
