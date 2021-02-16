@@ -1,5 +1,5 @@
 #############################################################################
-# Code taken from Phidget example code for the 1041 0/0/3 Accelerometer
+# ruaa Cpde taken from Phidget example code for the 1041 0/0/3 Accelerometer
 #############################################################################
 
 from Phidget22.Phidget import *
@@ -8,8 +8,6 @@ from Phidget22.Devices.Accelerometer import *
 # a list where we can remove from beginning and end, writing will add to right and reading will take from the front
 from collections import deque
 qt_thread = None
-
-
 
 
 class Position:
