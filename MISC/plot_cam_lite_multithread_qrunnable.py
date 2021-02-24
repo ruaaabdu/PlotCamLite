@@ -199,9 +199,6 @@ class Window(QWidget):
         camera_worker = CameraThreadQRunnable()
         #self.camera_thread1.changePixmap.connect(self.set_image)
         self.threadpool.start(camera_worker)
-        camera_worker.moveTo
-        pix = QPixmap.fromImage(image)
-        self.image_label.setPixmap(pix)
     
     @pyqtSlot(QImage)
     def set_image(self, image):

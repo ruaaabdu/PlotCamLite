@@ -1,22 +1,31 @@
-## Camera Thread 
+####################################################
+# camera_feed.py v0.3
+####################################################
+"""
+This code handles camera feed functions
+@author Ruaa Abdulmajeed
+@date February 23rd, 2021
+"""
+
 # Python wrapper for the RS Cam
 import pyrealsense2 as rs
 
+# OS module provides functions related to the OS
 import os 
 
+# Numpy for array functions
 import numpy as np
 
-import imageio
+# CV2 for resizing image
+#import cv2
 
-import threading
-
-import cv2
-
+# QImage for sending RGB image as a QImage
 from PyQt5.QtGui import QImage
 
+# PyQt Core for slots, signals, and threads
 from PyQt5.QtCore import pyqtSignal, QThread, pyqtSlot
 
-from time import sleep
+
 class CameraThread(QThread):
     """CameraThread runs the thread which handles the camera stream
 
@@ -24,7 +33,6 @@ class CameraThread(QThread):
         QThread (QThread): Manages the thread
     """
     changePixmap = pyqtSignal(QImage)
-    #color_image = np.array([])
     q_img = None
     def __init__(self, parent=None):
         super(CameraThread, self).__init__(parent)
@@ -47,7 +55,7 @@ class CameraThread(QThread):
         config.enable_stream(rs.stream.depth, 640, 360, rs.format.z16, 30)
         pipeline.start(config)
 
-        while self.runs == True and True:  # while thread is running and loop gets image
+        while self.runs == True:  # while thread is running and loop gets image
             self.frames = pipeline.wait_for_frames()
             color_frame = self.frames.get_color_frame()
 
@@ -69,16 +77,19 @@ class CameraThread(QThread):
             # RGB555 is cool looking, RGB888 is blue, BGR88 is the best option
             self.q_img = QImage(color_image.data, width, height,
                            bytes_per_line, QImage.Format_BGR888)
-
-            #log.info("Camera: Camera updated")
-            # triggers the signal, which updates the image
             self.changePixmap.emit(self.q_img)
 
     @pyqtSlot(str)
-    def take_picture(self, filename_to_save):
+    def take_picture(self, filepath, filename):
+        """ Saves RGB image and Depth data
+
+        Args:
+            filepath (str): Directory path leading to experiment
+            filename (str): Experiment name
+        """
         
-        self.save_rgb_640(filename_to_save)
-        self.save_depth_640(filename_to_save)
+        self.save_rgb_640(filepath + "\RGB\\" + filename)
+        self.save_depth_640(filepath + "\depth\\" + filename)
                     
     def save_rgb_1280(self, filename_to_save):
         # actions to save rgb as 1280x720
@@ -89,8 +100,7 @@ class CameraThread(QThread):
         self.q_img2 = QImage(self.color_image_1280.data, width, height, bytes_per_line, QImage.Format_BGR888)
         if self.q_img2 == None:
            return
-        self.q_img2.save(filename_to_save)
-        
+        self.q_img2.save(filename_to_save + ".bmp")
 
     def save_depth_1280(self, filename_to_save):
         ## actions to save depth
@@ -102,11 +112,10 @@ class CameraThread(QThread):
                 for x in range(0, frame_width):
                     pixel_depth = depth_frame.get_distance(x, y)
                     outfile.write("x = " + str(x) + " y = " + str(y) + " Depth = " + str(pixel_depth) + "\n")
-        
 
     def save_rgb_640(self, filename_to_save):
         # actions to save rgb as 640x480
-        self.q_img.save(filename_to_save)
+        self.q_img.save(filename_to_save + ".bmp")
 
     def save_depth_640(self, filename_to_save):
         ## actions to save depth as 640x480
