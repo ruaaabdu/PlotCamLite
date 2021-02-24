@@ -52,7 +52,7 @@ class Target(QWidget):
         painter.drawPixmap(self.rect(), self.pixmap)
         r = QRect(-1, -1, 2, 2)
         painter.setWindow(r)
-        pen = QPen(Qt.black, 0.04, Qt.DotLine, Qt.RoundCap)
+        pen = QPen(Qt.red, 0.5, Qt.DotLine, Qt.RoundCap)
         painter.setPen(pen)
         painter.drawPoint(self.coordinate)
         #print("curent coordinate = " + str(self.coordinate))
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     """For testing purposes"""
     app = QApplication(sys.argv)
     ex = Target()
-    ex.pixmap = QPixmap(r"Pictures\target_png_300.png")
+    ex.pixmap = QPixmap(r"Pictures\target_png_300_grey.png")
     ex.coordinate = QPointF(0, 0)
     ex.coordinate = QPointF(0.5, 0.5)
     ex.coordinate = QPointF(0.75, 0.75)

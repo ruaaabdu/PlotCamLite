@@ -19,11 +19,44 @@ import numpy as np
 # CV2 for resizing image
 #import cv2
 
+# A deque is a list where we can remove from beginning and end, writing will add to right and reading will take from the front
+from collections import deque
+
 # QImage for sending RGB image as a QImage
 from PyQt5.QtGui import QImage
 
 # PyQt Core for slots, signals, and threads
 from PyQt5.QtCore import pyqtSignal, QThread, pyqtSlot
+
+from threading import Thread
+
+tosave_buffer = deque([]) # Initalize empty deque to write and read values from
+
+def save_pictures():
+    while tosave_buffer:
+        image_data = tosave_buffer.popleft()
+
+        image = image_data[0]
+        depth_frame = image_data[1]
+        filepath = image_data[2]
+        filename = image_data[3]
+        
+        save_rgb_640(filepath + "\RGB\\" + filename, image)
+        save_depth_640(filepath + "\depth\\" + filename, depth_frame)
+
+
+def save_rgb_640(filename_to_save, image):
+    image.save(filename_to_save + ".bmp")
+
+def save_depth_640(filename_to_save, depth_frame):
+    frame_height = depth_frame.get_height()
+    frame_width = depth_frame.get_width()
+    with open(str(filename_to_save + ".txt"), 'w') as outfile:
+        for y in range(0, frame_height):
+            for x in range(0, frame_width):
+                pixel_depth = depth_frame.get_distance(x, y)
+                #outfile.write("x = " + str(x) + " y = " + str(y) + " Depth = " + str(pixel_depth) + "\n")
+                outfile.write(str(pixel_depth) + "\n")
 
 
 class CameraThread(QThread):
@@ -37,6 +70,7 @@ class CameraThread(QThread):
     def __init__(self, parent=None):
         super(CameraThread, self).__init__(parent)
         self.runs = False
+        self.saveThread = None
 
     def run(self):
         self.runs = True
@@ -51,7 +85,7 @@ class CameraThread(QThread):
         rotate_image = True
         pipeline = rs.pipeline()
         config = rs.config()
-        config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
+        config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 15)
         config.enable_stream(rs.stream.depth, 640, 360, rs.format.z16, 30)
         pipeline.start(config)
 
@@ -87,45 +121,12 @@ class CameraThread(QThread):
             filepath (str): Directory path leading to experiment
             filename (str): Experiment name
         """
-        
-        self.save_rgb_640(filepath + "\RGB\\" + filename)
-        self.save_depth_640(filepath + "\depth\\" + filename)
-                    
-    def save_rgb_1280(self, filename_to_save):
-        # actions to save rgb as 1280x720
-        height, width, channel = self.color_image_1280.shape
-        bytes_per_line = channel * width
-
-        # RGB555 is cool looking, RGB888 is blue, BGR88 is the best option
-        self.q_img2 = QImage(self.color_image_1280.data, width, height, bytes_per_line, QImage.Format_BGR888)
-        if self.q_img2 == None:
-           return
-        self.q_img2.save(filename_to_save + ".bmp")
-
-    def save_depth_1280(self, filename_to_save):
-        ## actions to save depth
         depth_frame = self.frames.get_depth_frame()
-        frame_height = depth_frame.get_height()
-        frame_width = depth_frame.get_width()
-        with open(str(filename_to_save + ".txt"), 'w') as outfile:
-            for y in range(0, frame_height):
-                for x in range(0, frame_width):
-                    pixel_depth = depth_frame.get_distance(x, y)
-                    outfile.write("x = " + str(x) + " y = " + str(y) + " Depth = " + str(pixel_depth) + "\n")
-
-    def save_rgb_640(self, filename_to_save):
-        # actions to save rgb as 640x480
-        self.q_img.save(filename_to_save + ".bmp")
-
-    def save_depth_640(self, filename_to_save):
-        ## actions to save depth as 640x480
-        depth_frame = self.frames.get_depth_frame()
-        frame_height = depth_frame.get_height()
-        frame_width = depth_frame.get_width()
-        with open(str(filename_to_save + ".txt"), 'w') as outfile:
-            for y in range(0, frame_height):
-                for x in range(0, frame_width):
-                    pixel_depth = depth_frame.get_distance(x, y)
-                    outfile.write("x = " + str(x) + " y = " + str(y) + " Depth = " + str(pixel_depth) + "\n")
+        #saveThread = None
+        image_data = (self.q_img, depth_frame, filepath, filename)
+        tosave_buffer.append(image_data)
+        if not self.saveThread or not self.saveThread.is_alive():
+            self.saveThread = Thread(target=save_pictures)
+            self.saveThread.start()
 
 

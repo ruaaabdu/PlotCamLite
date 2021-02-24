@@ -36,18 +36,17 @@ from camera_feed import CameraThread
 from target import Target
 from metadata import Metadata, sampleMetaData
 import extra_functions
+import util
 
 
-# ---------------------------------- Global Variables -------------------------------------#
 
-# path where the three folders will be set up in, can possible change this to a browser search in a later update.
-main_path = r"C:\Users\ruaaa\Desktop\CameraData"
+from signal import signal, SIGINT
+from sys import exit
 
-# False for Windows and True for RPI
-RPI = False
-
-file_name = ""
-
+# def handler(signal_received, frame):
+#     # Handle any cleanup here
+#     print('SIGINT or CTRL-C detected. Exiting gracefully')
+#     exit(0)
 
 class Window(QMainWindow):
     """Window class is used to generate UI of the main program.
@@ -65,7 +64,7 @@ class Window(QMainWindow):
         super().__init__()
 
         # Set title depending on OS
-        if RPI:
+        if util.RPI:
             self.title = "PlotCam Lite - RPI and PyQt5"
         else:
             self.title = "PlotCam Lite - Windows and PyQt5"
@@ -88,20 +87,22 @@ class Window(QMainWindow):
     def init_ui(self):
         """ Initalizes the UI by assigning methods to the buttons as well as starting the threads """
 
-        loadUi('PlotCamLiteUI.ui', self)
-        self.setWindowIcon(QIcon('cameraleaf.png'))
+        loadUi(util.MAIN_WINDOW_UI, self)
+        self.setWindowIcon(QIcon(util.ICON_IMAGE))
 
         # Set size of camera label and start camera thread
-        camera_size_policy = QSizePolicy(480, 640)
+        camera_size_policy = QSizePolicy(util.CAMERA_FEED_WIDTH, util.CAMERA_FEED_HEIGHT)
         self.camera_label.setSizePolicy(camera_size_policy)
         self.start_camera_thread()
 
+        # Start Accelerometer Thread
         self.start_accelerometer_thread()
 
         # Connect New Experiment Button
         self.new_file_button.clicked.connect(self.new_file_dialog)
-        self.file_name_label.setText(file_name)
+        self.file_name_label.setText(self.current_experiment_name)
 
+        # Draw target
         self.set_target()
 
         # Connect Take Picture Button
@@ -116,15 +117,12 @@ class Window(QMainWindow):
         self.camera_thread1.changePixmap.connect(self.set_image)
         self.camera_thread1.start()
         self.takePicture.connect(lambda: self.camera_thread1.take_picture(
-            self.current_file_path, self.current_experiment_name + str(self.current_plot_number).zfill(3)))
+            self.current_file_path, self.current_experiment_name + str(self.current_plot_number).zfill(util.PLOT_NUMBER_PADDING)))
 
     def start_accelerometer_thread(self):
         self.accelerometer_thread = AccelerometerThread(self)
         self.accelerometer_thread.changeTarget.connect(self.draw_coordinate)
         self.accelerometer_thread.start()
-
-    # def setup_metadata(self, metadata_filepath):
-    #     self.metadata = Metadata(metadata_filepath)
 
     @pyqtSlot(QImage)
     def set_image(self, image):
@@ -143,7 +141,7 @@ class Window(QMainWindow):
         self.x = new_position.x
         self.y = new_position.y
         self.target.coordinate = QPointF(self.x, self.y)
-        if self.x >= -0.2 and self.x <= 0.2 and self.y >= -0.2 and self.y <= 0.2:
+        if abs(self.x) <= util.LEVEL_TOLERANCE and abs(self.y) <= util.LEVEL_TOLERANCE :
             self.camera_level_label.setText("Camera is Level")
             self.camera_level_label.setStyleSheet("color: green;")
         else:
@@ -161,7 +159,7 @@ class Window(QMainWindow):
     def save_metadata(self):
         if self.metadata == None:
             return
-        num = str(self.current_plot_number).zfill(3)
+        num = str(self.current_plot_number).zfill(util.PLOT_NUMBER_PADDING)
         xpos = self.x
         ypos = self.y
         time = sampleMetaData["time"]
@@ -183,7 +181,7 @@ class Window(QMainWindow):
             new_file_name (str): The new experiment name
         """
         self.file_name_label.setText(new_file_name)
-        self.current_file_path = main_path + "\\" + new_file_name
+        self.current_file_path = util.MAIN_PATH + "\\" + new_file_name
         self.current_experiment_name = new_file_name
         self.metadata = Metadata(
             self.current_file_path + "\\Metadata\\" + self.current_experiment_name)
@@ -195,7 +193,7 @@ class Window(QMainWindow):
         Args:
             new_plot_number (str): The new plot number
         """
-        self.plot_number_label.setText("Plot #: " + new_plot_number.zfill(3))
+        self.plot_number_label.setText("Plot #: " + new_plot_number.zfill(util.PLOT_NUMBER_PADDING))
         self.current_plot_number = int(new_plot_number)
         #self.current_picture_path = self.current_file_path + "\RGB\\"+ self.current_experiment_name + new_plot_number
 
@@ -213,7 +211,7 @@ class Window(QMainWindow):
         self.target_layout.addWidget(self.wrapper)
         self.target_widget.setLayout(self.target_layout)
         self.target = Target()
-        self.target.pixmap = QPixmap(r"Pictures\target_png_300.png")
+        self.target.pixmap = QPixmap(r"Pictures\target.png")
         self.target.setGeometry(0, 0, 300, 300)
         self.target.setParent(self.wrapper)
         self.target.show()
@@ -227,6 +225,8 @@ class Window(QMainWindow):
         self.camera_thread1.stop()
         self.accelerometer_thread.stop()
         sys.exit()
+        for thread in threading.enumerate(): 
+            print(thread.name)
 
 
 class NewFilePage(QDialog):
@@ -298,8 +298,8 @@ class NewFilePage(QDialog):
 
     def create_directories(self):
         """ Creates new RGB, Depth, and Metadata directories using filename and sets new plot number"""
-        file_name = self.newFileLineEdit.text()
-        new_path = main_path + "\\" + file_name
+        self.current_experiment_name = self.newFileLineEdit.text()
+        new_path = util.MAIN_PATH + "\\" + self.current_experiment_name
 
         try:
             plotnumber = self.set_plot_number()
@@ -314,7 +314,7 @@ class NewFilePage(QDialog):
             os.mkdir(new_path)
 
         except OSError:
-            print("Creation of the directory %s failed" % main_path)
+            print("Creation of the directory %s failed" % util.MAIN_PATH)
             error_msg = QMessageBox()
             error_msg.setIcon(QMessageBox.Critical)
             error_msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
@@ -335,7 +335,7 @@ class NewFilePage(QDialog):
             os.mkdir(new_path + "\\" + "Depth")
             os.mkdir(new_path + "\\" + "Metadata")
 
-            self.changeFileName.emit(file_name)
+            self.changeFileName.emit(self.current_experiment_name)
 
             if response == QMessageBox.Ok:
                 self.close()
@@ -351,7 +351,7 @@ class NewFilePage(QDialog):
             plot_number_input = "1"
         self.changePlotNumber.emit(plot_number_input)
 
-        return plot_number_input.zfill(3)
+        return plot_number_input.zfill(util.PLOT_NUMBER_PADDING)
 
     def terminate(self):
         """ Terminate the dialog """
@@ -368,3 +368,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    # signal(SIGINT, handler)
