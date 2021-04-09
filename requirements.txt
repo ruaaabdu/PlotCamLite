@@ -1,0 +1,5 @@
+pyrealsense2
+numpy
+PyQt5
+Pillow
+opencv-python
