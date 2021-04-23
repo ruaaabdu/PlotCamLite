@@ -43,34 +43,24 @@ class Metadata:
     # def load_existing_experiment_metadata(self, existing_filepath):
 
 
-    def add_entry(self, number, time, xpos, ypos, air, light, lat, lon, batt, zero, plant_height):
+    def add_entry(self, number, time, date, xpos, ypos, name):
         """Appends plot data to metadata.
 
         Args:
             number (str): The plot number, padded by 0s on the left so that its always 3 digits
             time (str): The time the image was taken at
+            date (str): The date the image was taken 
             xpos (int): The x coordinate
             ypos (int): The y coordinate
-            air (int): The air
-            light (int): The light
-            lat (int): The lattitude where the picture was taken
-            lon (int): The longitude where the picture was taken
-            batt (int): The battery level
-            zero (int): The zeroing value
-            plantheight (int): The average plant height
+            name (int): Experiment name
         """
         image_data = {
             "number": number,
             "time": time,
+            "date": date,
             "xpos": xpos,
             "ypos": ypos,
-            "air": air,
-            "light": light,
-            "lattitude": lat,
-            "longitude": lon,
-            "battery": batt,
-            "zeroing_value": zero,
-            "plant_height": plant_height,
+            "name": name,
         }
         self.metadata.append(image_data)
         self.new_data = True

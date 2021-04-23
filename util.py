@@ -43,7 +43,7 @@ DEFAULT_FONT = QFont('Times', 15)
 # String constants
 LOG_FILENAME = "plotcamlite_log.txt"
 PLOT_NUM_DEFAULT_TEXT = "Enter Plot Number here"
-PLATFORM = "Windows"  # TODO theres a command like get_os u can call to automatically tell u
+PLATFORM = "Windows" 
 
 
 # for variables which can change
@@ -56,17 +56,6 @@ pcl_config = {"vr": False,
 
 
 # Advanced variables
-sampleMetaData = {
-"time": "10:24:26 AM",
-"air": "20.9",
-"light": "306",
-"lattitude": "45.234008",
-"longitude": "75.42955",
-"battery": "13.0",
-"zeroingvalue": "1754",
-"plantheight": "665",
-}
-
 
 resolution_width = {1280:720, 640:480} # dict to resolve resolutions
 
@@ -214,7 +203,6 @@ def frame_to_pixmap(color_image):
     q_img = QImage(color_image.data, width, height, bytes_per_line, QImage.Format_BGR888)
     return QPixmap.fromImage(q_img)
 
-# TODO is this meant to be an "is in circle" check?
 def within_tolerance(x, y, tolerance):
     """
     Tests whether position is within the given tolerance
