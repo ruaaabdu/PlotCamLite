@@ -2,9 +2,7 @@
 
 Table of Contents
 
-[TOCM]
-
-[TOC]
+<!-- toc -->
 
 ### Requirements
 Before running the plot cam .. 
