@@ -23,7 +23,7 @@ PCL_SRC_PATH = os.path.dirname(os.path.realpath(__file__)) # where all the code 
 PCL_EXP_PATH = os.path.join(PCL_SRC_PATH, "experiments") # path to pcl experiments. doesnt have to be relative to source dir.
 ICON_IMAGE_PATH = os.path.join(PCL_SRC_PATH, "resources", "icons", "cameraleaf.png")
 TARGET_ICON_PATH = os.path.join(PCL_SRC_PATH, "resources", "icons", "target_png_375.png")
-ALERT_AUDIO_PATH = os.path.join(PCL_SRC_PATH, "resources", "audio", "bell_alert.wav")
+ALERT_AUDIO_PATH = os.path.join(PCL_SRC_PATH, "resources", "audio", "camera-shutter-click.wav")
 FRAME_NCHANNELS = 3 # number of channels in the image
 
 SM_BUF_SIZE = 1  # num of frames to store in shared memory
