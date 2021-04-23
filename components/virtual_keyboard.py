@@ -58,8 +58,6 @@ class VirtualKeyboard(QWidget):
 
         self.backButton = QPushButton()
         self.backButton.setText("DELETE")
-        self.okButton = QPushButton()
-        self.okButton.setText("ENTER")
         self.cancelButton = QPushButton()
         self.cancelButton.setText("CANCEL")
 
@@ -88,16 +86,13 @@ class VirtualKeyboard(QWidget):
             self.keysLayout.setRowMinimumHeight(lineIndex, 50)
 
         self.backButton.clicked.connect(self.backspace)
-        self.okButton.clicked.connect(self.emitInputString)
         self.cancelButton.clicked.connect(self.emitCancel)
 
         self.backButton.setFont(DEFAULT_FONT)
-        self.okButton.setFont(DEFAULT_FONT)
         self.cancelButton.setFont(DEFAULT_FONT)
 
         self.buttonLayout.addWidget(self.cancelButton)
         self.buttonLayout.addWidget(self.backButton)
-        self.buttonLayout.addWidget(self.okButton)
 
         self.globalLayout.addLayout(self.keysLayout)
 

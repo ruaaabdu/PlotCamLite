@@ -13,6 +13,7 @@ def main():
 
     configure_plotcamlite()
     app = QApplication(sys.argv)
+    
     ex = PlotCamLiteWindow()
     ex.show()
     sys.exit(app.exec_())

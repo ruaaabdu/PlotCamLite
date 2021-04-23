@@ -10,7 +10,6 @@ from datetime import datetime
 from ntpath import basename
 import numpy as np
 
-# TODO whats w this heavy ass import...
 from Phidget22.Devices.Accelerometer import *
 from Phidget22.Phidget import *
 
@@ -44,6 +43,9 @@ class PlotCamLiteWindow(QMainWindow):
         self.accelerometer = None
         self.metadata = None
 
+        self.setFixedWidth(850)
+        self.setFixedHeight(630)
+
         self.experiment_path = None
         self.is_streaming = multiprocessing.Value('i', False)
 
@@ -59,10 +61,7 @@ class PlotCamLiteWindow(QMainWindow):
         Initalizes the UI.
         Connects methods to the buttons and begins the background processes.
         """
-
-        # ignore QT internal logs
-        with disable_logging("debug"):
-            loadUi(MAIN_WINDOW_UI_PATH, self)
+        loadUi(MAIN_WINDOW_UI_PATH, self)
         
         self.setWindowIcon(QIcon(ICON_IMAGE_PATH))
 
@@ -164,12 +163,6 @@ class PlotCamLiteWindow(QMainWindow):
         self.camera_communication_pipe.send((self.experiment_path, img_name)) 
 
         # wait for image to be saved
-        # TODO this busy wait seems awful cus it blocks the main GUI, (moving the gui around = crash)
-        # n we dont know how long it takes to save an image 
-        # make it so that a notification is sent when the image is saved
-        # which would involve a seperate thread here to do the waiting and communicating with the pipe
-        # and forwarding a signal to the main gui when ready. :]
-        # the thread could also be good for saving metadata w out a timer!
         while (self.pending_frame.value):
             pass
         
@@ -220,7 +213,7 @@ class PlotCamLiteWindow(QMainWindow):
         self.target_widget.setLayout(self.target_layout)
         self.target = Target()
         self.target.pixmap = QPixmap(TARGET_ICON_PATH)
-        self.target.setGeometry(0, 0, 300, 300)
+        self.target.setGeometry(40, 0, 150, 150)
         self.target.setParent(self.wrapper)
         self.target.show()
 

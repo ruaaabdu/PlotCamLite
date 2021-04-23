@@ -25,7 +25,7 @@ PCL_EXP_PATH = os.path.join(PCL_SRC_PATH, "experiments") # path to pcl experimen
 # Relative Paths
 MAIN_WINDOW_UI_PATH = os.path.join(PCL_SRC_PATH, "resources", "ui", "PlotCamLiteUI.ui")
 ICON_IMAGE_PATH = os.path.join(PCL_SRC_PATH, "resources", "icons", "cameraleaf.png")
-TARGET_ICON_PATH = os.path.join(PCL_SRC_PATH, "resources", "icons", "target_png_300.png")
+TARGET_ICON_PATH = os.path.join(PCL_SRC_PATH, "resources", "icons", "target_png_375.png")
 ALERT_AUDIO_PATH = os.path.join(PCL_SRC_PATH, "resources", "audio", "bell_alert.wav")
 
 # Constants
