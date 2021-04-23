@@ -82,7 +82,7 @@ def configure_plotcamlite():
     # command line argument parsing
     parser = ArgumentParser(
         prog="python plotcam-lite.py",
-        description="PlotCamLite (2021). Realtime plot monitoring system. By Rua'a Abdulmajeed, PhD in parsley agriculture.")
+        description="PlotCamLite (April 2021). Realtime plot monitoring system. By Rua'a Abdulmajeed for AAFC Phenom Corp")
 
 
     # running on headset or not
