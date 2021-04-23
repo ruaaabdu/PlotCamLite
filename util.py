@@ -14,27 +14,20 @@ from contextlib import contextmanager
 
 from PyQt5.QtGui import QImage, QPixmap, QFont
 
+
+
 # VARIABLES
 # System info
-PLATFORM = "Windows"  # TODO theres a command like get_os u can call to automatically tell u
-
 # Root Directories
 PCL_SRC_PATH = os.path.dirname(os.path.realpath(__file__)) # where all the code is loaded
 PCL_EXP_PATH = os.path.join(PCL_SRC_PATH, "experiments") # path to pcl experiments. doesnt have to be relative to source dir.
-
-# Relative Paths
-MAIN_WINDOW_UI_PATH = os.path.join(PCL_SRC_PATH, "resources", "ui", "PlotCamLiteUI_monitor.ui")
 ICON_IMAGE_PATH = os.path.join(PCL_SRC_PATH, "resources", "icons", "cameraleaf.png")
 TARGET_ICON_PATH = os.path.join(PCL_SRC_PATH, "resources", "icons", "target_png_375.png")
 ALERT_AUDIO_PATH = os.path.join(PCL_SRC_PATH, "resources", "audio", "bell_alert.wav")
-
-# Constants
-QT_FEED_WIDTH = 720 # width of the QT video image
-QT_FEED_HEIGHT = 1280 # height of the QT video image
 FRAME_NCHANNELS = 3 # number of channels in the image
-NBYTE_PER_FRAME = QT_FEED_WIDTH * QT_FEED_HEIGHT * FRAME_NCHANNELS # bytes in a frame
+
 SM_BUF_SIZE = 1  # num of frames to store in shared memory
-QT_STREAM_FPS = 15 # frame rate limiter for the QT GUI
+
 PLOT_NUMBER_PADDING = 3  # How many numbers the plot number must occupy, for example 1 will need to be 001 and 11 will need to be 011
 
 LEVEL_TOLERANCE = 0.2  # the absolute value which the accelerometer must return for the camera to be level
@@ -42,9 +35,6 @@ ACCELEROMETER_PERIOD_MS = 50  # in ms, how frequent the accelerometer is read
 
 IMG_SAVE_REQ_Q_SIZE = 100  # max size of queue storing pending frames to save.
 NWORKERS = 5  # num of worker processes crunching thru the frames-to-save queue.
-RS_FEED_WIDTH = 1280
-RS_FEED_HEIGHT = 720
-RS_STREAM_FPS = 15
 
 METADATA_UPDATE_PERIOD_SEC = 60  # save metadata to disk every minute
 
@@ -53,18 +43,32 @@ DEFAULT_FONT = QFont('Times', 15)
 # String constants
 LOG_FILENAME = "plotcamlite_log.txt"
 PLOT_NUM_DEFAULT_TEXT = "Enter Plot Number here"
+PLATFORM = "Windows"  # TODO theres a command like get_os u can call to automatically tell u
+
+
+# for variables which can change
+pcl_config = {"vr": False,
+                "platform" : "Windows",
+                "main_window_ui_path" : os.path.join(PCL_SRC_PATH, "resources", "ui", "PlotCamLiteUI_monitor.ui"), 
+                "stream_width" : 720,
+                "stream_height" : 1280,
+                "stream_fps": 30} # frame rate limiter 
+
 
 # Advanced variables
 sampleMetaData = {
-    "time": "10:24:26 AM",
-    "air": "20.9",
-    "light": "306",
-    "lattitude": "45.234008",
-    "longitude": "75.42955",
-    "battery": "13.0",
-    "zeroingvalue": "1754",
-    "plantheight": "665",
+"time": "10:24:26 AM",
+"air": "20.9",
+"light": "306",
+"lattitude": "45.234008",
+"longitude": "75.42955",
+"battery": "13.0",
+"zeroingvalue": "1754",
+"plantheight": "665",
 }
+
+
+resolution_width = {1280:720, 640:480} # dict to resolve resolutions
 
 
 # Utility functions
@@ -80,6 +84,35 @@ def configure_plotcamlite():
         prog="python plotcam-lite.py",
         description="PlotCamLite (2021). Realtime plot monitoring system. By Rua'a Abdulmajeed, PhD in parsley agriculture.")
 
+
+    # running on headset or not
+    parser.add_argument(
+        '-vr',
+        dest="vr",
+        action='store_true',
+        help="add this option for it to format properly on VR headset",
+    )
+
+    # change stream resolution
+    parser.add_argument(
+        '-res',
+        dest="res",
+        type=int,
+        default=1280,
+        choices=[1280, 640],
+        help="change the stream's resolution, either 1280x720(default) or 640x480",
+    )
+
+    # change the stream fps
+    parser.add_argument(
+        '-fps',
+        dest="fps",
+        type=int,
+        default=30,
+        choices=[15, 30],
+        help="set the stream's fps, either 15 or 30",
+    )
+
     # Log Level
     parser.add_argument(
         '-l', '--log',
@@ -91,8 +124,22 @@ def configure_plotcamlite():
     )
 
     args = parser.parse_args()
+
+    # handle VR 
+    pcl_config["vr"] = args.vr
+    if pcl_config["vr"]:
+        pcl_config["main_window_ui_path"] = os.path.join(PCL_SRC_PATH, "resources", "ui", "PlotCamLiteUI_VR.ui")
+            
+    # handle fps
+    pcl_config["stream_fps"] = args.fps
+
+    # handle resolution
+    pcl_config["stream_height"] = args.res
+    pcl_config["stream_width"] = resolution_width[pcl_config["stream_height"]]
+
+    # handle logging
     configure_logging(log_level=args.log_level, log_fpath=os.path.join(PCL_SRC_PATH, LOG_FILENAME))
-    
+
     # create the main path directory
     if not os.path.exists(PCL_EXP_PATH):
         os.makedirs(PCL_EXP_PATH)
@@ -112,11 +159,11 @@ def configure_logging(log_level=None, log_fpath=None):
     if not log_level:
         logging.disable()
         return
-    
+
     log_level = log_level.upper()
     root_logger = logging.getLogger()
     root_logger.setLevel(log_level)
-    
+
     # create formatter for the logs
     formatter = logging.Formatter("%(asctime)s :: %(levelname)s :: %(name)s :: %(funcName)s() :: %(message)s")
 

@@ -2,10 +2,9 @@ import os
 from multiprocessing import Pool, shared_memory, Queue
 import numpy as np
 from PIL import Image
-from util import RS_FEED_HEIGHT, RS_FEED_WIDTH, RS_STREAM_FPS
 import cv2
 
-def generate_frames(shared_mem_name, buffer_shape, frame_in_use, pending_frame, gui_communication_pipe, is_streaming):
+def generate_frames(shared_mem_name, buffer_shape, width, height, fps, frame_in_use, pending_frame, gui_communication_pipe, is_streaming):
     """
     Depth Camera Video Feed Process.
     Configures RealSense Depth Camera for stream in an isolated process.
@@ -15,6 +14,9 @@ def generate_frames(shared_mem_name, buffer_shape, frame_in_use, pending_frame, 
     Args:
         shared_mem_name (string): name of shared memory block
         buffer_shape (tuple): dimensions of the array backed by the shared memory
+        width (string): width of the stream
+        height (tuple): height of the stream
+        fps (int): frames per seconds
         frame_in_use (multiprocessing.Value): shared boolean variable, pseudo mutex 
         pending_frame(multiprocessing.Value): shared boolean variable, true if a frame needs saving
         gui_communication_pipe (multiprocessing.Connection): read pipe that holds information on saving frames
@@ -27,15 +29,13 @@ def generate_frames(shared_mem_name, buffer_shape, frame_in_use, pending_frame, 
     # prepare shared memory to be used as a frame buffer
     existing_shm = shared_memory.SharedMemory(name=shared_mem_name)
     frame_buf = np.ndarray(buffer_shape, dtype=np.uint8, buffer=existing_shm.buf)
-
     if len(rs.context().devices) > 0: # only start stream if camera connected
         
         # configure realsense pipeline and start recording
         pipeline = rs.pipeline()
         config = rs.config()
-        config.enable_stream(rs.stream.color, RS_FEED_WIDTH, RS_FEED_HEIGHT, rs.format.bgr8, RS_STREAM_FPS)
-        config.enable_stream(rs.stream.depth, RS_FEED_WIDTH, RS_FEED_HEIGHT, rs.format.z16, RS_STREAM_FPS)
-
+        config.enable_stream(rs.stream.color, width, height, rs.format.bgr8, fps)
+        config.enable_stream(rs.stream.depth, width, height, rs.format.z16, fps)
         pipeline.start(config)
         print("started pipeline")
 

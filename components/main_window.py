@@ -21,10 +21,9 @@ from PyQt5.uic import loadUi
 from PyQt5.QtMultimedia import QSound
 
 from util import (ACCELEROMETER_PERIOD_MS, FRAME_NCHANNELS, ICON_IMAGE_PATH, ALERT_AUDIO_PATH,
-                  LEVEL_TOLERANCE, PCL_EXP_PATH, MAIN_WINDOW_UI_PATH, METADATA_UPDATE_PERIOD_SEC,
-                  NBYTE_PER_FRAME, PLATFORM, PLOT_NUMBER_PADDING,
-                  QT_FEED_HEIGHT, QT_FEED_WIDTH, QT_STREAM_FPS, SM_BUF_SIZE, TARGET_ICON_PATH, disable_logging,
-                  frame_to_pixmap, within_tolerance, sampleMetaData)
+                  LEVEL_TOLERANCE, PCL_EXP_PATH, PLATFORM, PLOT_NUMBER_PADDING,
+                   SM_BUF_SIZE, TARGET_ICON_PATH, disable_logging,
+                  frame_to_pixmap, within_tolerance, sampleMetaData, pcl_config)
 
 from .depth_camera_feed import generate_frames
 from .metadata import Metadata
@@ -43,8 +42,6 @@ class PlotCamLiteWindow(QMainWindow):
         self.accelerometer = None
         self.metadata = None
 
-        #
-
         self.experiment_path = None
         self.is_streaming = multiprocessing.Value('i', False)
 
@@ -60,13 +57,13 @@ class PlotCamLiteWindow(QMainWindow):
         Initalizes the UI.
         Connects methods to the buttons and begins the background processes.
         """
+        if pcl_config["vr"]:
+            self.setFixedSize(850,630)
 
-        #self.setFixedSize(850,630)
         with disable_logging(logging.DEBUG):
-            loadUi(MAIN_WINDOW_UI_PATH, self)
+            loadUi(pcl_config["main_window_ui_path"], self)
 
         self.setWindowIcon(QIcon(ICON_IMAGE_PATH))
-
         # Start the camera stream
         self.start_stream()
 
@@ -83,7 +80,7 @@ class PlotCamLiteWindow(QMainWindow):
         # disable the take pic btn until an experiment is set
         self.take_picture_button.setEnabled(False)
 
-        self.alert = QSound(ALERT_AUDIO_PATH )
+        self.alert = QSound(ALERT_AUDIO_PATH)
 
     def start_stream(self):
         """
@@ -91,15 +88,21 @@ class PlotCamLiteWindow(QMainWindow):
         Creates a seperate process for the stream, and interacts with the frames through shared memory.
         Uses a QTimer to maintain a stable frame rate.
         """
+        # grab config variables
+        STREAM_HEIGHT = pcl_config["stream_height"]
+        STREAM_WIDTH = pcl_config["stream_width"]
+        STREAM_FPS = pcl_config["stream_fps"]
+
         # set up the label
-        camera_size_policy = QSizePolicy(QT_FEED_WIDTH, QT_FEED_HEIGHT)
+        camera_size_policy = QSizePolicy(STREAM_WIDTH, STREAM_HEIGHT)
         self.camera_label.setSizePolicy(camera_size_policy)
 
         # create shared memory to hold a single frame for inter process communication,
         # wrap it in a numpy array
-        log.debug("Allocating %i x %i bytes of shared memory"% (SM_BUF_SIZE, NBYTE_PER_FRAME))
-        self.frame_shm = shared_memory.SharedMemory(create=True, size=NBYTE_PER_FRAME*SM_BUF_SIZE)
-        shm_shape = (SM_BUF_SIZE, QT_FEED_HEIGHT, QT_FEED_WIDTH, FRAME_NCHANNELS)
+        nbyte_per_frame = STREAM_WIDTH * STREAM_HEIGHT * FRAME_NCHANNELS # bytes in a frame
+        log.debug("Allocating %i x %i bytes of shared memory"% (SM_BUF_SIZE, nbyte_per_frame))
+        self.frame_shm = shared_memory.SharedMemory(create=True, size=nbyte_per_frame*SM_BUF_SIZE)
+        shm_shape = (SM_BUF_SIZE, STREAM_HEIGHT, STREAM_WIDTH, FRAME_NCHANNELS)
         self.frame_buffer = np.ndarray(shm_shape, dtype=np.uint8, buffer=self.frame_shm.buf)
 
         # spawn the child depth cam process
@@ -112,6 +115,9 @@ class PlotCamLiteWindow(QMainWindow):
             args=(
                 self.frame_shm.name,
                 shm_shape,
+                STREAM_HEIGHT,
+                STREAM_WIDTH, 
+                STREAM_FPS,
                 self.frame_in_use,
                 self.pending_frame,
                 read_pipe,
@@ -125,9 +131,9 @@ class PlotCamLiteWindow(QMainWindow):
         self.fps_timer = QtCore.QTimer()
         self.fps_timer.setTimerType(QtCore.Qt.PreciseTimer)
         self.fps_timer.timeout.connect(self.update_stream)
-        self.fps_timer.setInterval(round(1000.0 / QT_STREAM_FPS))
+        self.fps_timer.setInterval(round(1000.0 / STREAM_FPS))
         self.fps_timer.start()
-        log.debug("Timer limiting FPS to %i" %QT_STREAM_FPS)
+        log.debug("Timer limiting FPS to %i" %STREAM_FPS)
 
         # just for some stats
         self.frameUpdateCount = 0
