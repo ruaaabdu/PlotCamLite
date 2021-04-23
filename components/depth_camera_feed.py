@@ -103,14 +103,14 @@ def save_depth_images(frames, experiment_path, image_name):
 
     # represent them as numpy arrays
     color_arr = np.asanyarray(color_frame.get_data())
-    depth_arr = np.asanyarray(depth_frame.get_data())/1000
+    depth_arr = np.asanyarray(depth_frame.get_data())
 
     # rotate them
     # convert BGR to RGB by rotating the channels
     color_arr = np.rot90(color_arr, 1).copy()[:, :, ::-1] 
     depth_arr = np.rot90(depth_arr, 1).copy()
     
-    # to save depth in mm, comment line below
+    # to save depth in m, uncomment line below
     #     depth_arr = depth_arr/1000
 
     # save them

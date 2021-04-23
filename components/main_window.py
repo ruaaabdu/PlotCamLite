@@ -43,8 +43,7 @@ class PlotCamLiteWindow(QMainWindow):
         self.accelerometer = None
         self.metadata = None
 
-        self.setFixedWidth(850)
-        self.setFixedHeight(630)
+        self.setFixedSize(850,630)
 
         self.experiment_path = None
         self.is_streaming = multiprocessing.Value('i', False)
@@ -61,8 +60,9 @@ class PlotCamLiteWindow(QMainWindow):
         Initalizes the UI.
         Connects methods to the buttons and begins the background processes.
         """
-        loadUi(MAIN_WINDOW_UI_PATH, self)
-        
+        with disable_logging(logging.DEBUG):
+            loadUi(MAIN_WINDOW_UI_PATH, self)
+
         self.setWindowIcon(QIcon(ICON_IMAGE_PATH))
 
         # Start the camera stream
