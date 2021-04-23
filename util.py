@@ -23,14 +23,14 @@ PCL_SRC_PATH = os.path.dirname(os.path.realpath(__file__)) # where all the code 
 PCL_EXP_PATH = os.path.join(PCL_SRC_PATH, "experiments") # path to pcl experiments. doesnt have to be relative to source dir.
 
 # Relative Paths
-MAIN_WINDOW_UI_PATH = os.path.join(PCL_SRC_PATH, "resources", "ui", "PlotCamLiteUI.ui")
+MAIN_WINDOW_UI_PATH = os.path.join(PCL_SRC_PATH, "resources", "ui", "PlotCamLiteUI_monitor.ui")
 ICON_IMAGE_PATH = os.path.join(PCL_SRC_PATH, "resources", "icons", "cameraleaf.png")
 TARGET_ICON_PATH = os.path.join(PCL_SRC_PATH, "resources", "icons", "target_png_375.png")
 ALERT_AUDIO_PATH = os.path.join(PCL_SRC_PATH, "resources", "audio", "bell_alert.wav")
 
 # Constants
-QT_FEED_WIDTH = 480 # width of the QT video image
-QT_FEED_HEIGHT = 640 # height of the QT video image
+QT_FEED_WIDTH = 720 # width of the QT video image
+QT_FEED_HEIGHT = 1280 # height of the QT video image
 FRAME_NCHANNELS = 3 # number of channels in the image
 NBYTE_PER_FRAME = QT_FEED_WIDTH * QT_FEED_HEIGHT * FRAME_NCHANNELS # bytes in a frame
 SM_BUF_SIZE = 1  # num of frames to store in shared memory
@@ -42,8 +42,8 @@ ACCELEROMETER_PERIOD_MS = 50  # in ms, how frequent the accelerometer is read
 
 IMG_SAVE_REQ_Q_SIZE = 100  # max size of queue storing pending frames to save.
 NWORKERS = 5  # num of worker processes crunching thru the frames-to-save queue.
-RS_FEED_WIDTH = 640
-RS_FEED_HEIGHT = 480
+RS_FEED_WIDTH = 1280
+RS_FEED_HEIGHT = 720
 RS_STREAM_FPS = 15
 
 METADATA_UPDATE_PERIOD_SEC = 60  # save metadata to disk every minute

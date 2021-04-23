@@ -43,7 +43,7 @@ class PlotCamLiteWindow(QMainWindow):
         self.accelerometer = None
         self.metadata = None
 
-        self.setFixedSize(850,630)
+        #
 
         self.experiment_path = None
         self.is_streaming = multiprocessing.Value('i', False)
@@ -60,6 +60,8 @@ class PlotCamLiteWindow(QMainWindow):
         Initalizes the UI.
         Connects methods to the buttons and begins the background processes.
         """
+
+        #self.setFixedSize(850,630)
         with disable_logging(logging.DEBUG):
             loadUi(MAIN_WINDOW_UI_PATH, self)
 
