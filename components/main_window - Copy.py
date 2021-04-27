@@ -16,24 +16,25 @@ from Phidget22.Phidget import *
 from PyQt5 import QtCore
 from PyQt5.QtCore import QPointF, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QGridLayout, QMainWindow, QSizePolicy, QWidget, QFileDialog
+from PyQt5.QtWidgets import QGridLayout, QMainWindow, QSizePolicy, QWidget, QFileDialog, QAction
 from PyQt5.uic import loadUi
 from PyQt5.QtMultimedia import QSound
 
 from util import (ACCELEROMETER_PERIOD_MS, FRAME_NCHANNELS, ICON_IMAGE_PATH, ALERT_AUDIO_PATH,
                   LEVEL_TOLERANCE, PCL_EXP_PATH, PLATFORM, PLOT_NUMBER_PADDING,
                    SM_BUF_SIZE, TARGET_ICON_PATH, disable_logging,
-                  frame_to_pixmap, within_tolerance, sampleMetaData, pcl_config)
+                  frame_to_pixmap, within_tolerance, pcl_config)
 
 from .depth_camera_feed import generate_frames
 from .metadata import Metadata
 from .new_experiment_dialog import NewExperimentPage
 from .target import Target
+from .about_dialog import AboutPage
 
 
 log = logging.getLogger("pcl_mainwindow")
 
-class PlotCamLiteWindow(QMainWindow):
+class PlotCamLiteWindow_VR(QMainWindow):
     def __init__(self):
         super().__init__()
 
@@ -63,7 +64,12 @@ class PlotCamLiteWindow(QMainWindow):
         with disable_logging(logging.DEBUG):
             loadUi(pcl_config["main_window_ui_path"], self)
 
+        # Set Window Icon
         self.setWindowIcon(QIcon(ICON_IMAGE_PATH))
+
+        # Add actions to menu bar
+        self.add_actions()
+
         # Start the camera stream
         self.start_stream()
 
@@ -81,6 +87,10 @@ class PlotCamLiteWindow(QMainWindow):
         self.take_picture_button.setEnabled(False)
 
         self.alert = QSound(ALERT_AUDIO_PATH)
+
+    def add_actions(self):
+        self.actionAbout.triggered.connect(self.about_dialog)
+        self.actionClose.triggered.connect(self.close)
 
     def start_stream(self):
         """
@@ -139,6 +149,9 @@ class PlotCamLiteWindow(QMainWindow):
         self.frameUpdateCount = 0
         self.stream_start_time = time.time()
 
+        # for camera depending on accelerometer
+        self.waitingForLevel = False
+
     def update_stream(self):
         """
         Updates the GUI to display the current video frame.
@@ -162,7 +175,12 @@ class PlotCamLiteWindow(QMainWindow):
 
         # disable take pic btn until its done 
         self.take_picture_button.setEnabled(False)
-        
+
+        if not within_tolerance(self.x, self.y, LEVEL_TOLERANCE):
+            log.info("Waiting till camera is level to take the picture")
+            self.waitingForLevel = True
+            return
+
         # write save image info to pipe
         plot_num_str = str(self.current_plot_number).zfill(PLOT_NUMBER_PADDING)
         img_name = "%s_%s" % (self.experiment_name, plot_num_str)
@@ -176,13 +194,14 @@ class PlotCamLiteWindow(QMainWindow):
         
         self.update_metadata()
         self.save_metadata()
-
-        # resume normal operations
+            # resume normal operations
         log.debug("Image <%s> successfully saved" %img_name)
         self.update_plot_number(self.current_plot_number + 1)
         self.take_picture_button.setEnabled(True)
 
         self.alert.play()
+        
+        self.waitingForLevel = False
 
     def start_accelerometer(self):
         """
@@ -237,11 +256,21 @@ class PlotCamLiteWindow(QMainWindow):
 
         self.target.coordinate = QPointF(self.x, self.y)
         if within_tolerance(self.x, self.y, LEVEL_TOLERANCE):
+            if self.waitingForLevel:
+                self.take_picture()
             self.camera_level_label.setText("Camera is Level")
             self.camera_level_label.setStyleSheet("color: green;")
         else:
             self.camera_level_label.setText("Camera is not Level")
             self.camera_level_label.setStyleSheet("color: red;")
+    
+    def about_dialog(self):
+        """
+        Open the "New Experiment" Dialog and connect methods to update file name and plot number labels.
+        """
+        about_page = AboutPage()
+        about_page.exec_()
+        about_page.show()
 
     def new_experiment_dialog(self):
         """
@@ -342,15 +371,9 @@ class PlotCamLiteWindow(QMainWindow):
         """        
         num = str(self.current_plot_number).zfill(PLOT_NUMBER_PADDING)
         t = datetime.now().strftime('%H:%M:%S')
-        air = sampleMetaData["air"] # TODO: Add air data
-        light = sampleMetaData["light"] # TODO: Add light data
-        lat = sampleMetaData["lattitude"] # TODO: Add lat data
-        lon = sampleMetaData["longitude"] # TODO: Add lon data
-        batt = sampleMetaData["battery"] # TODO: Add batt data
-        zero = sampleMetaData["zeroingvalue"] # TODO: Add zeroing data
-        plantheight = sampleMetaData["plantheight"] # TODO: Add plantheight data
-        self.metadata.add_entry(num, t, self.x, self.y, air, light,
-                                lat, lon, batt, zero, plantheight)
+        date = datetime.now().strftime('%d/%m/%Y')
+        name = self.experiment_name
+        self.metadata.add_entry(num, t, date, self.x, self.y, name)
 
     def save_metadata(self):
         """

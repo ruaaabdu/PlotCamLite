@@ -73,7 +73,7 @@ def generate_frames(shared_mem_name, buffer_shape, width, height, fps, frame_in_
         
         pipeline.stop()
     else:
-        print("no cameras")
+        print("No Camera Connected")
 
     is_streaming.Value = False
 
@@ -84,7 +84,6 @@ def generate_frames(shared_mem_name, buffer_shape, width, height, fps, frame_in_
 
     # free shared memory
     existing_shm.close()
-
 
 def save_depth_images(frames, experiment_path, image_name):
     """Saves RGB image and Depth data.
@@ -116,7 +115,6 @@ def save_depth_images(frames, experiment_path, image_name):
     # save them
     Image.fromarray(color_arr, "RGB").save(color_fname)
     np.savetxt(depth_fname, depth_arr, fmt="%.3f \n", newline='')
-
 
 # TODO find a way to do this, no import
 def get_number_of_cameras():

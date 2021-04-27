@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication
-from components.main_window import PlotCamLiteWindow
+from components.main_window import PlotCamLiteWindow_Monitor
 from util import configure_plotcamlite
 
 
@@ -14,7 +14,7 @@ def main():
     configure_plotcamlite()
     app = QApplication(sys.argv)
 
-    ex = PlotCamLiteWindow()
+    ex = PlotCamLiteWindow_Monitor()
     ex.show()
     sys.exit(app.exec_())
 

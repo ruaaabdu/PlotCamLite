@@ -9,12 +9,13 @@ from multiprocessing import Process, Value, shared_memory
 from datetime import datetime
 from ntpath import basename
 import numpy as np
+import webbrowser
 
 from Phidget22.Devices.Accelerometer import *
 from Phidget22.Phidget import *
 
 from PyQt5 import QtCore
-from PyQt5.QtCore import QPointF, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QPointF, pyqtSignal, pyqtSlot, QUrl
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QGridLayout, QMainWindow, QSizePolicy, QWidget, QFileDialog, QAction
 from PyQt5.uic import loadUi
@@ -22,7 +23,7 @@ from PyQt5.QtMultimedia import QSound
 
 from util import (ACCELEROMETER_PERIOD_MS, FRAME_NCHANNELS, ICON_IMAGE_PATH, ALERT_AUDIO_PATH,
                   LEVEL_TOLERANCE, PCL_EXP_PATH, PLATFORM, PLOT_NUMBER_PADDING,
-                   SM_BUF_SIZE, TARGET_ICON_PATH, disable_logging,
+                   SM_BUF_SIZE, TARGET_ICON_PATH, HELP_DOCUMENTATION_PATH, disable_logging,
                   frame_to_pixmap, within_tolerance, pcl_config)
 
 from .depth_camera_feed import generate_frames
@@ -34,7 +35,7 @@ from .about_dialog import AboutPage
 
 log = logging.getLogger("pcl_mainwindow")
 
-class PlotCamLiteWindow(QMainWindow):
+class PlotCamLiteWindow_Monitor(QMainWindow):
     def __init__(self):
         super().__init__()
 
@@ -91,6 +92,12 @@ class PlotCamLiteWindow(QMainWindow):
     def add_actions(self):
         self.actionAbout.triggered.connect(self.about_dialog)
         self.actionClose.triggered.connect(self.close)
+        self.actionDocumentation.triggered.connect(self.open_URL)
+
+    def open_URL(self):
+        url = bytearray(QUrl.fromLocalFile(HELP_DOCUMENTATION_PATH).toEncoded()).decode()
+        webbrowser.open(url)
+
 
     def start_stream(self):
         """
@@ -203,8 +210,6 @@ class PlotCamLiteWindow(QMainWindow):
         
         self.waitingForLevel = False
 
-
-       
     def start_accelerometer(self):
         """
         Creates Phidget22 accelerometer and polls it at a fixed rate using a QTimer.
@@ -219,7 +224,7 @@ class PlotCamLiteWindow(QMainWindow):
             self.accelerometer.openWaitForAttachment(1000)
             log.info("Created accelerometer")
         except:
-            log.warning("No accelerometer connected")
+            log.warning("No Accelerometer Connected")
             self.accelerometer = None
             return
 
@@ -253,8 +258,6 @@ class PlotCamLiteWindow(QMainWindow):
         # TODO try-catch error
         acceleration = self.accelerometer.getAcceleration()
 
-        
-
         self.x = acceleration[0]
         self.y = acceleration[1]
 
@@ -275,7 +278,6 @@ class PlotCamLiteWindow(QMainWindow):
         about_page = AboutPage()
         about_page.exec_()
         about_page.show()
-
 
     def new_experiment_dialog(self):
         """

@@ -337,7 +337,7 @@
      <string>Help</string>
     </property>
     <addaction name="actionDocumentation"/>
-    <addaction name="actionHelp"/>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -355,7 +355,7 @@
     <string>Documentation</string>
    </property>
   </action>
-  <action name="actionHelp">
+  <action name="actionAbout">
    <property name="text">
     <string>About</string>
    </property>
