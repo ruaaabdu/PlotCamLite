@@ -13,7 +13,7 @@ from argparse import ArgumentParser
 from contextlib import contextmanager
 
 from PyQt5.QtGui import QImage, QPixmap, QFont
-
+from PyQt5.QtCore import QUrl
 
 # VARIABLES
 # System info
@@ -24,7 +24,8 @@ ICON_IMAGE_PATH = os.path.join(PCL_SRC_PATH, "resources", "icons", "cameraleaf.p
 TARGET_ICON_PATH = os.path.join(PCL_SRC_PATH, "resources", "icons", "target_png_375.png")
 ALERT_AUDIO_PATH = os.path.join(PCL_SRC_PATH, "resources", "audio", "camera-shutter-click.wav")
 ABOUT_DIALOG_PATH = os.path.join(PCL_SRC_PATH, "resources", "ui", "PlotCamLiteUI_AboutDialog.ui")
-HELP_DOCUMENTATION_PATH = os.path.join(PCL_SRC_PATH, "resources", "documents", "Help_Documentation.pdf")
+HELP_DOCUMENTATION_PATH = os.path.join(PCL_SRC_PATH, "resources", "documents", "Help_Documentation_Sample.pdf")
+HELP_DOCUMENTATION_URL = bytearray(QUrl.fromLocalFile(HELP_DOCUMENTATION_PATH).toEncoded()).decode()
 
 
 FRAME_NCHANNELS = 3 # number of channels in the image

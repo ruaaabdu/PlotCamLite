@@ -15,7 +15,7 @@ from Phidget22.Devices.Accelerometer import *
 from Phidget22.Phidget import *
 
 from PyQt5 import QtCore
-from PyQt5.QtCore import QPointF, pyqtSignal, pyqtSlot, QUrl
+from PyQt5.QtCore import QPointF, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QGridLayout, QMainWindow, QSizePolicy, QWidget, QFileDialog, QAction
 from PyQt5.uic import loadUi
@@ -23,7 +23,7 @@ from PyQt5.QtMultimedia import QSound
 
 from util import (ACCELEROMETER_PERIOD_MS, FRAME_NCHANNELS, ICON_IMAGE_PATH, ALERT_AUDIO_PATH,
                   LEVEL_TOLERANCE, PCL_EXP_PATH, PLATFORM, PLOT_NUMBER_PADDING,
-                   SM_BUF_SIZE, TARGET_ICON_PATH, HELP_DOCUMENTATION_PATH, disable_logging,
+                   SM_BUF_SIZE, TARGET_ICON_PATH, HELP_DOCUMENTATION_URL, disable_logging,
                   frame_to_pixmap, within_tolerance, pcl_config)
 
 from .depth_camera_feed import generate_frames
@@ -90,14 +90,49 @@ class PlotCamLiteWindow_Monitor(QMainWindow):
         self.alert = QSound(ALERT_AUDIO_PATH)
 
     def add_actions(self):
-        self.actionAbout.triggered.connect(self.about_dialog)
+        """
+        Connects the menu bar actions to their respective functions.
+        """
+        # File Menu
         self.actionClose.triggered.connect(self.close)
-        self.actionDocumentation.triggered.connect(self.open_URL)
 
-    def open_URL(self):
-        url = bytearray(QUrl.fromLocalFile(HELP_DOCUMENTATION_PATH).toEncoded()).decode()
+        # Edit Menu
+        self.action640x480.triggered.connect(lambda: self.set_res(480, 640))
+        self.action1280x720.triggered.connect(lambda: self.set_res(720, 1280))
+        self.action15.triggered.connect(lambda: self.set_fps(15))
+        self.action30.triggered.connect(lambda: self.set_fps(30))
+
+        # Help Menu
+        self.actionAbout.triggered.connect(self.about_dialog)
+        self.actionDocumentation.triggered.connect(lambda: self.open_URL(HELP_DOCUMENTATION_URL))
+
+    def open_URL(self, url):
+        """
+        Opens specified URL
+
+        Args:
+            url ([string]): [The URL to open, can be formatted using QUrl]
+        """
         webbrowser.open(url)
 
+    def set_res(self, width, height):
+        """
+        Set resolution of the stream
+
+        Args:
+            width (int): Width of the stream
+            height (int): Height of the stream
+        """
+        self.configure_stream(width, height, pcl_config["stream_fps"])
+    
+    def set_fps(self, fps):
+        """
+        Set FPS of the stream
+
+        Args:
+            fps (int): Frames per Second of the stream
+        """
+        self.configure_stream(pcl_config["stream_width"], pcl_config["stream_height"], fps)
 
     def start_stream(self):
         """
@@ -158,6 +193,18 @@ class PlotCamLiteWindow_Monitor(QMainWindow):
 
         # for camera depending on accelerometer
         self.waitingForLevel = False
+
+    def configure_stream(self, width, height, fps):
+        # End exisiting stream
+        pcl_config["stream_height"] = height
+        pcl_config["stream_width"] = width
+        pcl_config["stream_fps"] = fps
+
+        # Tear down camera process
+        self.end_stream()
+
+        # Start stream with new values
+        self.start_stream()
 
     def update_stream(self):
         """
@@ -392,16 +439,7 @@ class PlotCamLiteWindow_Monitor(QMainWindow):
         log.info("Saving metadata")
         self.metadata.save()
 
-    def closeEvent(self, event):
-        """ 
-        Overrides systems "self.close" method so that the program can terminate properly.
-        Teardown all running threads and processes.
-        """
-        # tear down accelerometer
-        if self.accelerometer:
-            pass
-
-        # tear down camera process
+    def end_stream(self):
         if self.depth_cam_proc:
             log.debug(
                 "Stream's Average FPS: %.2f"
@@ -417,6 +455,18 @@ class PlotCamLiteWindow_Monitor(QMainWindow):
             # free shared memory
             self.frame_shm.close()
             self.frame_shm.unlink()
-            log.info("Terminated camera process")  
+            log.info("Terminated camera process") 
+
+    def closeEvent(self, event):
+        """ 
+        Overrides systems "self.close" method so that the program can terminate properly.
+        Teardown all running threads and processes.
+        """
+        # tear down accelerometer
+        if self.accelerometer:
+            pass
+
+        # tear down camera process
+        self.end_stream() 
 
         log.info("PlotCamLite says goodbye :[")
