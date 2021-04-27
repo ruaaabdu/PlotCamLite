@@ -45,7 +45,7 @@ DEFAULT_FONT = QFont('Times', 15)
 # String constants
 LOG_FILENAME = "plotcamlite_log.txt"
 PLOT_NUM_DEFAULT_TEXT = "Enter Plot Number here"
-PLATFORM = "Windows"  # TODO theres a command like get_os u can call to automatically tell u
+PLATFORM = "Windows" 
 
 
 # for variables which can change
@@ -56,6 +56,8 @@ pcl_config = {"vr": False,
                 "stream_height" : 1280,
                 "stream_fps": 30} # frame rate limiter 
 
+
+# Advanced variables
 
 resolution_width = {1280:720, 640:480} # dict to resolve resolutions
 
@@ -71,7 +73,7 @@ def configure_plotcamlite():
     # command line argument parsing
     parser = ArgumentParser(
         prog="python plotcam-lite.py",
-        description="PlotCamLite (2021). Realtime plot monitoring system. By Rua'a Abdulmajeed, PhD in parsley agriculture.")
+        description="PlotCamLite (April 2021). Realtime plot monitoring system. By Rua'a Abdulmajeed for AAFC Phenom Corp")
 
 
     # running on headset or not
@@ -203,7 +205,6 @@ def frame_to_pixmap(color_image):
     q_img = QImage(color_image.data, width, height, bytes_per_line, QImage.Format_BGR888)
     return QPixmap.fromImage(q_img)
 
-# TODO is this meant to be an "is in circle" check?
 def within_tolerance(x, y, tolerance):
     """
     Tests whether position is within the given tolerance

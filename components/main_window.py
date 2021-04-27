@@ -23,7 +23,7 @@ from PyQt5.QtMultimedia import QSound
 from util import (ACCELEROMETER_PERIOD_MS, FRAME_NCHANNELS, ICON_IMAGE_PATH, ALERT_AUDIO_PATH,
                   LEVEL_TOLERANCE, PCL_EXP_PATH, PLATFORM, PLOT_NUMBER_PADDING,
                    SM_BUF_SIZE, TARGET_ICON_PATH, disable_logging,
-                  frame_to_pixmap, within_tolerance, sampleMetaData, pcl_config)
+                  frame_to_pixmap, within_tolerance, pcl_config)
 
 from .depth_camera_feed import generate_frames
 from .metadata import Metadata
@@ -149,6 +149,9 @@ class PlotCamLiteWindow(QMainWindow):
         self.frameUpdateCount = 0
         self.stream_start_time = time.time()
 
+        # for camera depending on accelerometer
+        self.waitingForLevel = False
+
     def update_stream(self):
         """
         Updates the GUI to display the current video frame.
@@ -172,7 +175,12 @@ class PlotCamLiteWindow(QMainWindow):
 
         # disable take pic btn until its done 
         self.take_picture_button.setEnabled(False)
-        
+
+        if not within_tolerance(self.x, self.y, LEVEL_TOLERANCE):
+            log.info("Waiting till camera is level to take the picture")
+            self.waitingForLevel = True
+            return
+
         # write save image info to pipe
         plot_num_str = str(self.current_plot_number).zfill(PLOT_NUMBER_PADDING)
         img_name = "%s_%s" % (self.experiment_name, plot_num_str)
@@ -186,14 +194,17 @@ class PlotCamLiteWindow(QMainWindow):
         
         self.update_metadata()
         self.save_metadata()
-
-        # resume normal operations
+            # resume normal operations
         log.debug("Image <%s> successfully saved" %img_name)
         self.update_plot_number(self.current_plot_number + 1)
         self.take_picture_button.setEnabled(True)
 
         self.alert.play()
+        
+        self.waitingForLevel = False
 
+
+       
     def start_accelerometer(self):
         """
         Creates Phidget22 accelerometer and polls it at a fixed rate using a QTimer.
@@ -242,11 +253,15 @@ class PlotCamLiteWindow(QMainWindow):
         # TODO try-catch error
         acceleration = self.accelerometer.getAcceleration()
 
+        
+
         self.x = acceleration[0]
         self.y = acceleration[1]
 
         self.target.coordinate = QPointF(self.x, self.y)
         if within_tolerance(self.x, self.y, LEVEL_TOLERANCE):
+            if self.waitingForLevel:
+                self.take_picture()
             self.camera_level_label.setText("Camera is Level")
             self.camera_level_label.setStyleSheet("color: green;")
         else:
@@ -260,6 +275,7 @@ class PlotCamLiteWindow(QMainWindow):
         about_page = AboutPage()
         about_page.exec_()
         about_page.show()
+
 
     def new_experiment_dialog(self):
         """
@@ -360,15 +376,9 @@ class PlotCamLiteWindow(QMainWindow):
         """        
         num = str(self.current_plot_number).zfill(PLOT_NUMBER_PADDING)
         t = datetime.now().strftime('%H:%M:%S')
-        air = sampleMetaData["air"] # TODO: Add air data
-        light = sampleMetaData["light"] # TODO: Add light data
-        lat = sampleMetaData["lattitude"] # TODO: Add lat data
-        lon = sampleMetaData["longitude"] # TODO: Add lon data
-        batt = sampleMetaData["battery"] # TODO: Add batt data
-        zero = sampleMetaData["zeroingvalue"] # TODO: Add zeroing data
-        plantheight = sampleMetaData["plantheight"] # TODO: Add plantheight data
-        self.metadata.add_entry(num, t, self.x, self.y, air, light,
-                                lat, lon, batt, zero, plantheight)
+        date = datetime.now().strftime('%d/%m/%Y')
+        name = self.experiment_name
+        self.metadata.add_entry(num, t, date, self.x, self.y, name)
 
     def save_metadata(self):
         """
