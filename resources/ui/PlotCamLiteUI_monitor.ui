@@ -273,8 +273,104 @@
      <height>18</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionClose"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <widget class="QMenu" name="menuChange_Resolution">
+     <property name="title">
+      <string>Change Resolution</string>
+     </property>
+     <addaction name="action640x480"/>
+     <addaction name="action1280x720"/>
+    </widget>
+    <widget class="QMenu" name="menuChange_View_Type">
+     <property name="title">
+      <string>Change View Type</string>
+     </property>
+     <addaction name="actionMonitor"/>
+     <addaction name="actionVR_Headset"/>
+    </widget>
+    <widget class="QMenu" name="menuChange_FPS">
+     <property name="title">
+      <string>Change FPS</string>
+     </property>
+     <addaction name="action15"/>
+     <addaction name="action30"/>
+    </widget>
+    <addaction name="menuChange_Resolution"/>
+    <addaction name="menuChange_FPS"/>
+    <addaction name="menuChange_View_Type"/>
+   </widget>
+   <widget class="QMenu" name="menuAbout">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionDocumentation"/>
+    <addaction name="actionAbout"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuView"/>
+   <addaction name="menuAbout"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionClose">
+   <property name="text">
+    <string>Close</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="action640x480">
+   <property name="text">
+    <string>640x480</string>
+   </property>
+  </action>
+  <action name="action1280x720">
+   <property name="text">
+    <string>1280x720</string>
+   </property>
+  </action>
+  <action name="actionMonitor">
+   <property name="text">
+    <string>Monitor</string>
+   </property>
+  </action>
+  <action name="actionVR_Headset">
+   <property name="text">
+    <string>VR Headset</string>
+   </property>
+  </action>
+  <action name="action15">
+   <property name="text">
+    <string>15</string>
+   </property>
+  </action>
+  <action name="action30">
+   <property name="text">
+    <string>30</string>
+   </property>
+  </action>
+  <action name="actionDocumentation">
+   <property name="text">
+    <string>Documentation</string>
+   </property>
+  </action>
  </widget>
  <tabstops>
   <tabstop>new_file_button</tabstop>

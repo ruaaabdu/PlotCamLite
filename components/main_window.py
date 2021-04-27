@@ -16,7 +16,7 @@ from Phidget22.Phidget import *
 from PyQt5 import QtCore
 from PyQt5.QtCore import QPointF, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QGridLayout, QMainWindow, QSizePolicy, QWidget, QFileDialog
+from PyQt5.QtWidgets import QGridLayout, QMainWindow, QSizePolicy, QWidget, QFileDialog, QAction
 from PyQt5.uic import loadUi
 from PyQt5.QtMultimedia import QSound
 
@@ -29,6 +29,7 @@ from .depth_camera_feed import generate_frames
 from .metadata import Metadata
 from .new_experiment_dialog import NewExperimentPage
 from .target import Target
+from .about_dialog import AboutPage
 
 
 log = logging.getLogger("pcl_mainwindow")
@@ -63,7 +64,12 @@ class PlotCamLiteWindow(QMainWindow):
         with disable_logging(logging.DEBUG):
             loadUi(pcl_config["main_window_ui_path"], self)
 
+        # Set Window Icon
         self.setWindowIcon(QIcon(ICON_IMAGE_PATH))
+
+        # Add actions to menu bar
+        self.add_actions()
+
         # Start the camera stream
         self.start_stream()
 
@@ -81,6 +87,10 @@ class PlotCamLiteWindow(QMainWindow):
         self.take_picture_button.setEnabled(False)
 
         self.alert = QSound(ALERT_AUDIO_PATH)
+
+    def add_actions(self):
+        self.actionAbout.triggered.connect(self.about_dialog)
+        self.actionClose.triggered.connect(self.close)
 
     def start_stream(self):
         """
@@ -242,6 +252,14 @@ class PlotCamLiteWindow(QMainWindow):
         else:
             self.camera_level_label.setText("Camera is not Level")
             self.camera_level_label.setStyleSheet("color: red;")
+    
+    def about_dialog(self):
+        """
+        Open the "New Experiment" Dialog and connect methods to update file name and plot number labels.
+        """
+        about_page = AboutPage()
+        about_page.exec_()
+        about_page.show()
 
     def new_experiment_dialog(self):
         """

@@ -24,6 +24,8 @@ PCL_EXP_PATH = os.path.join(PCL_SRC_PATH, "experiments") # path to pcl experimen
 ICON_IMAGE_PATH = os.path.join(PCL_SRC_PATH, "resources", "icons", "cameraleaf.png")
 TARGET_ICON_PATH = os.path.join(PCL_SRC_PATH, "resources", "icons", "target_png_375.png")
 ALERT_AUDIO_PATH = os.path.join(PCL_SRC_PATH, "resources", "audio", "camera-shutter-click.wav")
+ABOUT_DIALOG_PATH = os.path.join(PCL_SRC_PATH, "resources", "ui", "PlotCamLiteUI_AboutDialog.ui")
+
 FRAME_NCHANNELS = 3 # number of channels in the image
 
 SM_BUF_SIZE = 1  # num of frames to store in shared memory
@@ -53,19 +55,6 @@ pcl_config = {"vr": False,
                 "stream_width" : 720,
                 "stream_height" : 1280,
                 "stream_fps": 30} # frame rate limiter 
-
-
-# Advanced variables
-sampleMetaData = {
-"time": "10:24:26 AM",
-"air": "20.9",
-"light": "306",
-"lattitude": "45.234008",
-"longitude": "75.42955",
-"battery": "13.0",
-"zeroingvalue": "1754",
-"plantheight": "665",
-}
 
 
 resolution_width = {1280:720, 640:480} # dict to resolve resolutions
