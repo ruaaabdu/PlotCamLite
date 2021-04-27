@@ -53,7 +53,7 @@ PLATFORM = "Windows"
 # for variables which can change
 pcl_config = {"vr": False,
                 "platform" : "Windows",
-                "main_window_ui_path" : os.path.join(PCL_SRC_PATH, "resources", "ui", "PlotCamLiteUI_Monitor.ui"), 
+                "main_window_ui_path" : os.path.join(PCL_SRC_PATH, "resources", "ui", "PlotCamLiteUI_monitor.ui"), 
                 "stream_width" : 720,
                 "stream_height" : 1280,
                 "stream_fps": 30} # frame rate limiter 

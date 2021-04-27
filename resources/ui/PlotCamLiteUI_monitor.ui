@@ -295,7 +295,7 @@
       <string>Change View Type</string>
      </property>
      <addaction name="actionMonitor"/>
-     <addaction name="actionVR_Headset"/>
+     <addaction name="actionVR"/>
     </widget>
     <widget class="QMenu" name="menuChange_FPS">
      <property name="title">
@@ -315,14 +315,8 @@
     <addaction name="actionDocumentation"/>
     <addaction name="actionAbout"/>
    </widget>
-   <widget class="QMenu" name="menuView">
-    <property name="title">
-     <string>View</string>
-    </property>
-   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
-   <addaction name="menuView"/>
    <addaction name="menuAbout"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -351,7 +345,7 @@
     <string>Monitor</string>
    </property>
   </action>
-  <action name="actionVR_Headset">
+  <action name="actionVR">
    <property name="text">
     <string>VR Headset</string>
    </property>

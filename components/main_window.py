@@ -17,7 +17,7 @@ from Phidget22.Phidget import *
 from PyQt5 import QtCore
 from PyQt5.QtCore import QPointF, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QGridLayout, QMainWindow, QSizePolicy, QWidget, QFileDialog, QAction
+from PyQt5.QtWidgets import QGridLayout, QMainWindow, QSizePolicy, QWidget, QFileDialog, QAction, QActionGroup
 from PyQt5.uic import loadUi
 from PyQt5.QtMultimedia import QSound
 
@@ -101,6 +101,48 @@ class PlotCamLiteWindow_Monitor(QMainWindow):
         self.action1280x720.triggered.connect(lambda: self.set_res(720, 1280))
         self.action15.triggered.connect(lambda: self.set_fps(15))
         self.action30.triggered.connect(lambda: self.set_fps(30))
+        self.actionMonitor.triggered.connect(lambda: self.set_view("view"))
+        self.actionVR.triggered.connect(lambda: self.set_fps(30))
+
+        self.resGroup = QActionGroup(self)
+        self.resGroup.addAction(self.action640x480)
+        self.resGroup.addAction(self.action1280x720)
+        self.resGroup.setExclusive(True)
+
+        self.action640x480.setCheckable(True)
+        self.action1280x720.setCheckable(True)
+
+        if pcl_config["stream_height"] == 640:
+            self.action640x480.setChecked(True)
+        else:
+            self.action1280x720.setChecked(True)
+
+
+        self.fpsGroup = QActionGroup(self)
+        self.fpsGroup.addAction(self.action15)
+        self.fpsGroup.addAction(self.action30)
+        self.fpsGroup.setExclusive(True)
+
+        self.action15.setCheckable(True)
+        self.action30.setCheckable(True)
+
+        if pcl_config["stream_fps"] == 15:
+            self.action15.setChecked(True)
+        else:
+            self.action30.setChecked(True)
+
+        self.viewGroup = QActionGroup(self)
+        self.viewGroup.addAction(self.actionMonitor)
+        self.viewGroup.addAction(self.actionVR)
+
+        self.actionMonitor.setCheckable(True)
+        if pcl_config["vr"] == True:
+            self.actionVR.setChecked(True)
+        else:
+            self.actionMonitor.setChecked(True)
+
+        self.actionMonitor.setChecked(True)
+        self.viewGroup.setExclusive(True)
 
         # Help Menu
         self.actionAbout.triggered.connect(self.about_dialog)
@@ -133,6 +175,15 @@ class PlotCamLiteWindow_Monitor(QMainWindow):
             fps (int): Frames per Second of the stream
         """
         self.configure_stream(pcl_config["stream_width"], pcl_config["stream_height"], fps)
+
+    def set_view(self, view_type):
+        """
+        Set View Type of the window
+
+        Args:
+            view_type (string): View type of the window, monitor or vr
+        """
+        log.info("View Type Changed to " + view_type)
 
     def start_stream(self):
         """
@@ -205,6 +256,8 @@ class PlotCamLiteWindow_Monitor(QMainWindow):
 
         # Start stream with new values
         self.start_stream()
+
+        log.info("The stream configuration is as follows:\n Resolution: " + height + "x" + width + "\nFPS: " + fps)
 
     def update_stream(self):
         """
