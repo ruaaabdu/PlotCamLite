@@ -29,7 +29,6 @@ def generate_frames(shared_mem_name, buffer_shape, width, height, fps, frame_in_
     # prepare shared memory to be used as a frame buffer
     existing_shm = shared_memory.SharedMemory(name=shared_mem_name)
     frame_buf = np.ndarray(buffer_shape, dtype=np.uint8, buffer=existing_shm.buf)
-    print("width: " + str(width) + "height: " + str(height) + "FPS " + str(fps))
     if len(rs.context().devices) > 0: # only start stream if camera connected
         
         # configure realsense pipeline and start recording
