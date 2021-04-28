@@ -316,16 +316,8 @@
      <addaction name="action15"/>
      <addaction name="action30"/>
     </widget>
-    <widget class="QMenu" name="menuChange_ViewType">
-     <property name="title">
-      <string>Change ViewType</string>
-     </property>
-     <addaction name="actionMonitor_2"/>
-     <addaction name="actionVR_2"/>
-    </widget>
     <addaction name="menuChange_Resolution"/>
     <addaction name="menuChange_FPS"/>
-    <addaction name="menuChange_ViewType"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">

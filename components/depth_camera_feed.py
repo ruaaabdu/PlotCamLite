@@ -73,7 +73,7 @@ def generate_frames(shared_mem_name, buffer_shape, width, height, fps, frame_in_
         
         pipeline.stop()
     else:
-        print("No Camera Connected")
+        print("There are no camera connected")
 
     is_streaming.Value = False
 

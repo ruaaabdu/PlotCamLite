@@ -59,7 +59,7 @@ class PlotCamLiteWindow_Monitor(QMainWindow):
         Initalizes the UI.
         Connects methods to the buttons and begins the background processes.
         """
-        if pcl_config["vr"]:
+        if not pcl_config["monitor"]:
             self.setFixedSize(850,630)
 
         with disable_logging(logging.DEBUG):
@@ -117,7 +117,6 @@ class PlotCamLiteWindow_Monitor(QMainWindow):
         else:
             self.action1280x720.setChecked(True)
 
-
         self.fpsGroup = QActionGroup(self)
         self.fpsGroup.addAction(self.action15)
         self.fpsGroup.addAction(self.action30)
@@ -130,19 +129,6 @@ class PlotCamLiteWindow_Monitor(QMainWindow):
             self.action15.setChecked(True)
         else:
             self.action30.setChecked(True)
-
-        self.viewGroup = QActionGroup(self)
-        self.viewGroup.addAction(self.actionMonitor)
-        self.viewGroup.addAction(self.actionVR)
-
-        self.actionMonitor.setCheckable(True)
-        if pcl_config["vr"] == True:
-            self.actionVR.setChecked(True)
-        else:
-            self.actionMonitor.setChecked(True)
-
-        self.actionMonitor.setChecked(True)
-        self.viewGroup.setExclusive(True)
 
         # Help Menu
         self.actionAbout.triggered.connect(self.about_dialog)

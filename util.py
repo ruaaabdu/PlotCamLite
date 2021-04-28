@@ -51,9 +51,9 @@ PLATFORM = "Windows"
 
 
 # for variables which can change
-pcl_config = {"vr": False,
+pcl_config = {"monitor": False,
                 "platform" : "Windows",
-                "main_window_ui_path" : os.path.join(PCL_SRC_PATH, "resources", "ui", "PlotCamLiteUI_monitor.ui"), 
+                "main_window_ui_path" : os.path.join(PCL_SRC_PATH, "resources", "ui", "PlotCamLiteUI_VR.ui"), 
                 "stream_width" : 720,
                 "stream_height" : 1280,
                 "stream_fps": 30} # frame rate limiter 
@@ -80,10 +80,10 @@ def configure_plotcamlite():
 
     # running on headset or not
     parser.add_argument(
-        '-vr',
-        dest="vr",
+        '-monitor',
+        dest="monitor",
         action='store_true',
-        help="add this option for it to format properly on VR headset",
+        help="add this option for it to format properly on a monitor",
     )
 
     # change stream resolution
@@ -118,10 +118,10 @@ def configure_plotcamlite():
 
     args = parser.parse_args()
 
-    # handle VR 
-    pcl_config["vr"] = args.vr
-    if pcl_config["vr"]:
-        pcl_config["main_window_ui_path"] = os.path.join(PCL_SRC_PATH, "resources", "ui", "PlotCamLiteUI_VR.ui")
+    # handle monitor view 
+    pcl_config["monitor"] = args.monitor
+    if pcl_config["monitor"]:
+        pcl_config["main_window_ui_path"] = os.path.join(PCL_SRC_PATH, "resources", "ui", "PlotCamLiteUI_monitor.ui")
             
     # handle fps
     pcl_config["stream_fps"] = args.fps

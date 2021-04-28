@@ -290,13 +290,6 @@
      <addaction name="action640x480"/>
      <addaction name="action1280x720"/>
     </widget>
-    <widget class="QMenu" name="menuChange_View_Type">
-     <property name="title">
-      <string>Change View Type</string>
-     </property>
-     <addaction name="actionMonitor"/>
-     <addaction name="actionVR"/>
-    </widget>
     <widget class="QMenu" name="menuChange_FPS">
      <property name="title">
       <string>Change FPS</string>
@@ -306,7 +299,6 @@
     </widget>
     <addaction name="menuChange_Resolution"/>
     <addaction name="menuChange_FPS"/>
-    <addaction name="menuChange_View_Type"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
