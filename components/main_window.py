@@ -257,8 +257,7 @@ class PlotCamLiteWindow_Monitor(QMainWindow):
         # Start stream with new values
         self.start_stream()
 
-        log.info("The stream configuration is as follows:\n Resolution: " + height + "x" + width + "\nFPS: " + fps)
-
+        log.info("The stream configuration is as follows:\n Resolution: " + str(height) + "x" + str(width) + "\nFPS: " + str(fps))
     def update_stream(self):
         """
         Updates the GUI to display the current video frame.
