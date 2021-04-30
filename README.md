@@ -1,14 +1,10 @@
 # Plot Cam Lite
 
-Table of Contents
-
-<!-- toc -->
-
 ### Requirements
 Before running the plot cam .. 
 1. python3.9
 2. Windows machine (NUC or PC)
-3. Download the Phidget Windows Driver (insert link here)
+3. Download the Phidget Windows Driver (https://www.phidgets.com/docs/OS_-_Windows)
 
 
 ### Usage 
