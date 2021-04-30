@@ -4,7 +4,7 @@
 """
 This code stores constant variables and important paths so that they are easily accessible.
 @author Ruaa Abdulmajeed
-@date February 24th, 2021
+@date April 30th, 2021
 """
 
 import logging
