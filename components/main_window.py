@@ -1,5 +1,9 @@
 """
 Main GUI of the PlotCamLite copyright LLC all rights reserved.
+
+@author Ruaa Abdulmajeed
+@date April 30th, 2021
+
 """
 import logging
 import os

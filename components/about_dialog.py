@@ -1,3 +1,8 @@
+"""
+This code handles the about dialog
+@author Ruaa Abdulmajeed
+@date April 30th, 2021
+"""
 import logging
 import os
 

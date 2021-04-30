@@ -1,3 +1,9 @@
+"""
+This code handles the stream functions
+@author Ruaa Abdulmajeed
+@date April 30th, 2021
+"""
+
 import os
 from multiprocessing import Pool, shared_memory, Queue
 import numpy as np

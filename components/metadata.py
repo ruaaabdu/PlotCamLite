@@ -1,10 +1,7 @@
-####################################################
-# metadata.py v0.2
-####################################################
 """
 This code handles the metadata functions
 @author Ruaa Abdulmajeed
-@date February 23rd, 2020
+@date April 30th, 2021
 """
 import json
 import os

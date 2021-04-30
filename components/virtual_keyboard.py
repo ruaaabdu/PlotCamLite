@@ -1,5 +1,8 @@
-# KEYBOARD CLASS
-
+"""
+This code handles the virtual keyboard functions
+@author Ruaa Abdulmajeed
+@date April 30th, 2021
+"""
 # PyQt Widgets for the applicaton and layout
 from PyQt5.QtCore import QSize, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import (QGridLayout, QHBoxLayout, QLineEdit, QPushButton,

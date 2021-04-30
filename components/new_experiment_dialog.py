@@ -1,3 +1,9 @@
+"""
+This code handles the new experiment dialog
+@author Ruaa Abdulmajeed
+@date April 30th, 2021
+"""
+
 import logging
 import os
 

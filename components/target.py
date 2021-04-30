@@ -1,6 +1,3 @@
-####################################################
-# target.py v0.1
-####################################################
 """
 This code handles the target functions
 @author Ruaa Abdulmajeed
