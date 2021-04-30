@@ -18,7 +18,7 @@ from PyQt5.QtCore import QUrl
 # VARIABLES
 # System info
 # Root Directories
-PCL_SRC_PATH = os.path.dirname(os.path.realpath(__file__)) # where all the code is loaded
+PCL_SRC_PATH = os.getcwd() # where all the code is loaded
 PCL_EXP_PATH = os.path.join(PCL_SRC_PATH, "experiments") # path to pcl experiments. doesnt have to be relative to source dir.
 ICON_IMAGE_PATH = os.path.join(PCL_SRC_PATH, "resources", "icons", "cameraleaf.png")
 TARGET_ICON_PATH = os.path.join(PCL_SRC_PATH, "resources", "icons", "target_png_375.png")
@@ -48,7 +48,9 @@ DEFAULT_FONT = QFont('Times', 15)
 LOG_FILENAME = "plotcamlite_log.txt"
 PLOT_NUM_DEFAULT_TEXT = "Enter Plot Number here"
 PLATFORM = "Windows" 
-
+LAST_UPDATED_YEAR = 2021
+VERSION_NUMBER = 1.0
+PROGRAM_TITLE = "Plot Cam Lite V" + str(VERSION_NUMBER)
 
 # for variables which can change
 pcl_config = {"monitor": False,

@@ -22,8 +22,8 @@ from PyQt5.uic import loadUi
 from PyQt5.QtMultimedia import QSound
 
 from util import (ACCELEROMETER_PERIOD_MS, FRAME_NCHANNELS, ICON_IMAGE_PATH, ALERT_AUDIO_PATH,
-                  LEVEL_TOLERANCE, PCL_EXP_PATH, PLATFORM, PLOT_NUMBER_PADDING,
-                   SM_BUF_SIZE, TARGET_ICON_PATH, HELP_DOCUMENTATION_URL, disable_logging,
+                  LEVEL_TOLERANCE, PCL_EXP_PATH, PLATFORM, PLOT_NUMBER_PADDING, SM_BUF_SIZE, 
+                  PROGRAM_TITLE, TARGET_ICON_PATH, HELP_DOCUMENTATION_URL, disable_logging,
                   frame_to_pixmap, within_tolerance, pcl_config)
 
 from .depth_camera_feed import generate_frames
@@ -64,6 +64,9 @@ class PlotCamLiteWindow_Monitor(QMainWindow):
 
         with disable_logging(logging.DEBUG):
             loadUi(pcl_config["main_window_ui_path"], self)
+
+        # Set Window Title
+        self.setWindowTitle(PROGRAM_TITLE)
 
         # Set Window Icon
         self.setWindowIcon(QIcon(ICON_IMAGE_PATH))
@@ -309,7 +312,7 @@ class PlotCamLiteWindow_Monitor(QMainWindow):
             self.accelerometer.openWaitForAttachment(1000)
             log.info("Created accelerometer")
         except:
-            log.warning("No Accelerometer Connected")
+            log.warning("There is no accelerometer connected")
             self.accelerometer = None
             return
 
