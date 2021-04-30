@@ -17,12 +17,12 @@ for the first time use, download the necessary libraies:
 To run the plotcam:
 
 
-python plotcam-lite.py
+    python plotcam-lite.py
 
 
 or to run with extra configurations, such as logging:
 
 
-python plotcam-lite.py -h
+    python plotcam-lite.py -h
 
 for usage information, please refer to the Help_Documentation pdf in the resources/documentation directory.
