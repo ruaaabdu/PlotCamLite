@@ -26,3 +26,5 @@ or to run with extra configurations, such as logging:
     python plotcam-lite.py -h
 
 for usage information, please refer to the Help_Documentation pdf in the resources/documentation directory.
+
+For consumer use, access insaller file at https://www.dropbox.com/s/sllghmiw2qa05nx/PlotCamLite2021.exe?dl=0
