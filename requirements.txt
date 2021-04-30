@@ -1,0 +1,6 @@
+pyrealsense2
+numpy
+PyQt5
+Pillow
+Phidget22
+opencv-python

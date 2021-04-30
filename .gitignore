@@ -1,0 +1,4 @@
+experiments/*
+components/__pycache__/*
+__pycache__/*
+plotcamlite_log.txt
