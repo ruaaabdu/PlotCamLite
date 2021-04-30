@@ -29,4 +29,4 @@ or to run with extra configurations, such as logging:
 
 python plotcam-lite.py -h
 
-for usage information, please refer to *insert link here*
+for usage information, please refer to the Help_Documentation pdf in the resources/documentation directory.
