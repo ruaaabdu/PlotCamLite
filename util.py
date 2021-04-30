@@ -82,7 +82,7 @@ def configure_plotcamlite():
 
     # running on headset or not
     parser.add_argument(
-        '-monitor',
+        '-m', '--monitor',
         dest="monitor",
         action='store_true',
         help="add this option for it to format properly on a monitor",
