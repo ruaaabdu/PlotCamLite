@@ -12,7 +12,7 @@ Before running the plot cam ..
 for the first time use, download the necessary libraies:
 
 
-pip install -r requirements.txt
+    pip install -r requirements.txt
 
 To run the plotcam:
 
